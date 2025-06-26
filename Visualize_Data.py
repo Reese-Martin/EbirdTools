@@ -5,6 +5,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 
+np.set_printoptions(legacy='1.25')  # I hate the np.int64() display option
+
 
 # specify path to eBird data, cache to avoid streamlit reloading data everytime a change is made
 
@@ -58,22 +60,24 @@ st.plotly_chart(fig_lifers)
 # Group by date and year to get daily species counts
 daily_species = df.groupby(['Year', 'Date']).agg({'Common Name': lambda x: x.nunique()})
 daily_species.reset_index(inplace=True)
-daily_species.rename(columns={'Common Name': 'Daily Count'}, inplace=True)
+# daily_species.rename(columns={'Common Name': 'Daily Count'}, inplace=True)
 # Recalculate day of year (for unique dates only)
 daily_species['DayOfYear'] = daily_species['Date'].dt.dayofyear
+
+test = df[df["Year"] == 2023].sort_values(by="DayOfYear")
 years = sorted(daily_species['Year'].unique())
 
-tmp = []
-for year in years:
-     tmp = tmp + list(np.cumsum(daily_species[daily_species['Year'] == year]['Daily Count'].values))
-
-daily_species['CumulativeYear'] = tmp
 fig = go.Figure()
 for year in years:
-    year_data = daily_species[daily_species['Year'] == year]
+    year_data = df[df['Year'] == year].sort_values(by="DayOfYear").drop_duplicates('Common Name')
+    unqDays = year_data['DayOfYear'].unique()
+    year_count = np.cumsum([len(year_data[year_data['DayOfYear'] == i]) for i in unqDays])
 
-    fig.add_trace(go.Scatterpolar(r=year_data['CumulativeYear'], theta=(year_data['DayOfYear'] / 365) * 360,
-                                  mode='lines+markers', name=str(year), line=dict(shape='spline')))
+    fig.add_trace(go.Scatterpolar(r=year_count, theta=(unqDays / 365) * 360,
+                                  mode='lines+markers', name=str(year), line=dict(shape='spline'),
+                                  customdata=unqDays, hovertemplate="Day: %{customdata}<br>"
+                                                                       + "Species Count: %{r}<br>" +
+                                                                       "Year: " + str(year)))
 fig.update_layout(
     polar=dict(radialaxis_title="Species Count",
                angularaxis=dict(rotation=90, direction="clockwise", tickmode='array',
