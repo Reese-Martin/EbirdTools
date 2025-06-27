@@ -12,79 +12,122 @@ np.set_printoptions(legacy='1.25')  # I hate the np.int64() display option
 
 
 @st.cache_data
-def load_data():
-    loadDF = pd.read_csv("data/MyEBirdData.csv")
+def load_data(file):
+    loadDF = pd.read_csv(file)
     loadDF['Date'] = pd.to_datetime(loadDF['Date'])
     return loadDF
 
 
-df = load_data()
+# configure page
+st.set_page_config(layout="wide")
+with st.expander("Select eBird Data File"):
+    uploaded_file = st.file_uploader("Upload an eBird csv file", type=["csv"])
 
-# Add day-of-year and year columns
-df['Year'] = df['Date'].dt.year
-df['DayOfYear'] = df['Date'].dt.dayofyear
+if uploaded_file:
+    # load file
+    df = load_data(uploaded_file)
+    # remove / entries to avoid double counts of species in lifer totals
+    df = df[[True if '/' not in i else False for i in df['Common Name']]]
+    # remove entries where count was 'X'
+    df = df[[True if 'X' not in i else False for i in df['Count']]]
 
-st.title("eBird Data Dive")
+    # Add day-of-year and year columns
+    df['Year'] = df['Date'].dt.year
+    df['DayOfYear'] = df['Date'].dt.dayofyear
+    all_species = sorted(df['Common Name'].unique())
 
-# Sidebar filters
-# Sidebar species selector
-all_species = sorted(df['Common Name'].unique())
-selected_species = st.sidebar.multiselect("Select Species", all_species, default=all_species)
+    # organize data by individual birds
+    first_seen = df.groupby('Common Name')[['Date', 'Location']].min().reset_index()
+    first_seen['total_observed'] = [sum(df[df['Common Name'] == i]['Count'].values.astype(int)) for i in all_species]
+    first_seen = first_seen.sort_values('Date')
+    first_seen['Lifer Count'] = [i + 1 for i in range(len(all_species))]
 
-selected_years = st.sidebar.multiselect("Select Year", df['Date'].dt.year.unique(), default=df['Date'].dt.year.unique())
+    mostSeen = first_seen.sort_values(by=['total_observed', 'Common Name'], ascending=False)
+    mostSeen.index = [first_seen[first_seen['Common Name'] == i]['Lifer Count'].values[0] for i in
+                      mostSeen['Common Name']]
+    mostSeen.index.name = "Lifer Count"
 
-# Filtered Data
-filtered_df = df[(df['Common Name'].isin(selected_species)) & (df['Date'].dt.year.isin(selected_years))]
+    st.title("eBird Data Dive")
+    # Sidebar filters
+    # Sidebar species selector
+    view = st.sidebar.radio("View", ["Map", "Lifers", "By Year", "Stats"])
+    if view == "Map":
+        # selected_species = st.sidebar.multiselect("Select Species", all_species, default=all_species)
+        selected_years = st.sidebar.multiselect("Select Year", df['Date'].dt.year.unique(),
+                                                default=df['Date'].dt.year.unique())
 
-# Map of observations
-st.subheader(f"Map of sightings")
-if filtered_df.empty:
-    st.warning("No data available for this selection.")
-else:
-    fig = px.scatter_map(filtered_df, lat="Latitude", lon="Longitude", hover_name="Location",
-                         hover_data=["Date", "Count"], color_discrete_sequence=["blue"], zoom=3, height=500)
-    fig.update_layout(mapbox_style="open-street-map")
-    st.plotly_chart(fig)
+        # Filtered Data
+        filtered_df = df[(df['Date'].dt.year.isin(selected_years))]
 
-# Time series
-first_seen = df.groupby('Common Name')['Date'].min().reset_index()
-first_seen = first_seen.sort_values('Date')
-first_seen['Lifer Count'] = [i + 1 for i in range(len(all_species))]
+        hotspot_species = filtered_df.groupby(['Location', 'Latitude', 'Longitude'])[
+            'Common Name'].nunique().reset_index(name='Unique Species Count')
 
-st.subheader(f"Lifers Over Time")
-fig_lifers = px.line(first_seen, x='Date', y='Lifer Count', markers=True,
-                     labels={'Date': 'Date', 'Lifer Count': 'Cumulative Lifers'},
-                     hover_data={'Common Name': True, 'Date': True, 'Lifer Count': True}, title='Lifers Over Time')
-st.plotly_chart(fig_lifers)
+        # Map of observations
+        st.subheader(f"Map of sightings")
+        if filtered_df.empty:
+            st.warning("No data available for this selection.")
+        else:
+            # fig = px.scatter_map(filtered_df, lat="Latitude", lon="Longitude", hover_name="Location",
+            #                      hover_data=["Date", "Count"], color_discrete_sequence=["blue"], zoom=3, height=500)
+            fig = px.scatter_map(hotspot_species, lat='Latitude', lon='Longitude', color='Unique Species Count',
+                                 size='Unique Species Count', hover_name='Location',
+                                 hover_data={'Unique Species Count': True}, zoom=3,
+                                 height=800, color_continuous_scale='Viridis')
+            fig.update_layout(mapbox_style="open-street-map", autosize=True)
+            st.plotly_chart(fig)
 
-# Group by date and year to get daily species counts
-daily_species = df.groupby(['Year', 'Date']).agg({'Common Name': lambda x: x.nunique()})
-daily_species.reset_index(inplace=True)
-# daily_species.rename(columns={'Common Name': 'Daily Count'}, inplace=True)
-# Recalculate day of year (for unique dates only)
-daily_species['DayOfYear'] = daily_species['Date'].dt.dayofyear
+    elif view == "Lifers":
+        # Time series
+        st.subheader(f"Lifers Over Time")
+        fig_lifers = px.line(first_seen, x='Date', y='Lifer Count', markers=True,
+                             labels={'Date': 'Date', 'Lifer Count': 'Cumulative Lifers'},
+                             hover_data={'Common Name': True, 'Date': True, 'Lifer Count': True, 'Location': True},
+                             title='Lifers Over Time')
+        fig_lifers.update_layout(autosize=True, width=100, height=500)
+        st.plotly_chart(fig_lifers, use_container_width=True)
 
-test = df[df["Year"] == 2023].sort_values(by="DayOfYear")
-years = sorted(daily_species['Year'].unique())
+    elif view == "By Year":
+        # Group by date and year to get daily species counts
+        daily_species = df.groupby(['Year', 'Date']).agg({'Common Name': lambda x: x.nunique()})
+        daily_species.reset_index(inplace=True)
+        # daily_species.rename(columns={'Common Name': 'Daily Count'}, inplace=True)
+        # Recalculate day of year (for unique dates only)
+        daily_species['DayOfYear'] = daily_species['Date'].dt.dayofyear
 
-fig = go.Figure()
-for year in years:
-    year_data = df[df['Year'] == year].sort_values(by="DayOfYear").drop_duplicates('Common Name')
-    unqDays = year_data['DayOfYear'].unique()
-    year_count = np.cumsum([len(year_data[year_data['DayOfYear'] == i]) for i in unqDays])
+        test = df[df["Year"] == 2023].sort_values(by="DayOfYear")
+        years = sorted(daily_species['Year'].unique())
 
-    fig.add_trace(go.Scatterpolar(r=year_count, theta=(unqDays / 365) * 360,
-                                  mode='lines+markers', name=str(year), line=dict(shape='spline'),
-                                  customdata=unqDays, hovertemplate="Day: %{customdata}<br>"
-                                                                       + "Species Count: %{r}<br>" +
-                                                                       "Year: " + str(year)))
-fig.update_layout(
-    polar=dict(radialaxis_title="Species Count",
-               angularaxis=dict(rotation=90, direction="clockwise", tickmode='array',
-                                tickvals=np.linspace(0, 360, 12, endpoint=False),
-                                ticktext=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])),
-    title="Species Seen by Day of Year (Polar Plot)",
-    showlegend=True)
+        fig = go.Figure()
+        for year in years:
+            year_data = df[df['Year'] == year].sort_values(by="DayOfYear").drop_duplicates('Common Name')
+            unqDays = year_data['DayOfYear'].unique()
+            year_count = np.cumsum([len(year_data[year_data['DayOfYear'] == i]) for i in unqDays])
 
-st.plotly_chart(fig)
+            fig.add_trace(go.Scatterpolar(r=year_count, theta=(unqDays / 365) * 360,
+                                          mode='lines+markers', name=str(year), line=dict(shape='spline'),
+                                          customdata=unqDays, hovertemplate="Day: %{customdata}<br>"
+                                                                            + "Species Count: %{r}<br>" +
+                                                                            "Year: " + str(year)))
+        fig.update_layout(
+            polar=dict(radialaxis_title="Species Count",
+                       angularaxis=dict(rotation=90, direction="clockwise", tickmode='array',
+                                        tickvals=np.linspace(0, 360, 12, endpoint=False),
+                                        ticktext=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])),
+            title="Species Seen by Day of Year (Polar Plot)",
+            autosize=True, width=800, height=800, showlegend=True)
+
+        st.plotly_chart(fig)
+    elif view == "Stats":
+        col1, col2 = st.columns(2)
+        with st.container():
+            with col1:
+                st.header("Most Seen")
+                st.table(mostSeen[['Common Name', 'total_observed']][0:5])
+            with col2:
+                st.header("least Seen")
+                st.table(mostSeen[['Common Name', 'total_observed']][-5:])
+        with st.container():
+            with col1:
+                dists = [df[df['Submission ID'] == i]['Distance Traveled (km)'].values[0] for i in df['Submission ID'].unique()]
+                st.text(f"You have traveled {np.nansum(dists)} kilometers while birding!")
