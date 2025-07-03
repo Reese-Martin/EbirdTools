@@ -8,9 +8,6 @@ import numpy as np
 np.set_printoptions(legacy='1.25')  # I hate the np.int64() display option
 
 
-# specify path to eBird data, cache to avoid streamlit reloading data everytime a change is made
-
-
 @st.cache_data
 def load_data(file):
     loadDF = pd.read_csv(file)
@@ -31,13 +28,15 @@ if uploaded_file:
     # remove entries where count was 'X'
     df = df[[True if 'X' not in i else False for i in df['Count']]]
 
-    # Add day-of-year and year columns
+    # Add month, month name, day-of-year, and year columns
+    df['Month'] = df['Date'].dt.month
+    df['Month Name'] = df['Date'].dt.strftime('%B')
     df['Year'] = df['Date'].dt.year
     df['DayOfYear'] = df['Date'].dt.dayofyear
     all_species = sorted(df['Common Name'].unique())
 
     # organize data by individual birds
-    first_seen = df.groupby('Common Name')[['Date', 'Location']].min().reset_index()
+    first_seen = df.groupby('Common Name')[['Scientific Name', 'Date', 'Location']].min().reset_index()
     first_seen['total_observed'] = [sum(df[df['Common Name'] == i]['Count'].values.astype(int)) for i in all_species]
     first_seen = first_seen.sort_values('Date')
     first_seen['Lifer Count'] = [i + 1 for i in range(len(all_species))]
@@ -108,17 +107,37 @@ if uploaded_file:
                                           customdata=unqDays, hovertemplate="Day: %{customdata}<br>"
                                                                             + "Species Count: %{r}<br>" +
                                                                             "Year: " + str(year)))
-        fig.update_layout(
-            polar=dict(radialaxis_title="Species Count",
-                       angularaxis=dict(rotation=90, direction="clockwise", tickmode='array',
-                                        tickvals=np.linspace(0, 360, 12, endpoint=False),
-                                        ticktext=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])),
-            title="Species Seen by Day of Year (Polar Plot)",
-            autosize=True, width=800, height=800, showlegend=True)
+        fig.update_layout(polar=dict(radialaxis_title="Species Count",
+                                     angularaxis=dict(rotation=90, direction="clockwise", tickmode='array',
+                                                      tickvals=np.linspace(0, 360, 12, endpoint=False),
+                                                      ticktext=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])),
+                          title="Species Seen by Day of Year (Polar Plot)",
+                          autosize=True, width=800, height=800, showlegend=True)
 
         st.plotly_chart(fig)
+
+        monthly_species = (df.groupby(['Year', 'Month'])['Common Name'].nunique().reset_index(name='Species Count'))
+        monthly_avg = (monthly_species.groupby('Month')['Species Count'].mean().reset_index())
+        monthly_avg['Month Name'] = monthly_avg['Month'].apply(
+            lambda x: pd.to_datetime(str(x), format='%m').strftime('%B'))
+        monthly_avg = monthly_avg.sort_values('Month')
+
+        st.subheader("Average Species Seen per Calendar Month")
+
+        fig = px.line(monthly_avg, x='Month Name', y='Species Count', markers=True,
+                      labels={'Species Count': 'Avg. Unique Species', 'Month Name': 'Month'},
+                      title='Average Number of Unique Species per Month (All Years)')
+
+        fig.update_layout(height=500, xaxis_title='Month', yaxis_title='Species Count')
+        st.plotly_chart(fig, use_container_width=True)
+
     elif view == "Stats":
+        birdingDays = df['Date'].unique()
+        biggestDay = birdingDays[
+            np.argmax(np.array([len(df[df['Date'] == i]['Common Name'].unique()) for i in birdingDays]))]
+        BDspecies = len(df[df['Date'] == biggestDay]['Common Name'].unique())
+
         col1, col2 = st.columns(2)
         with st.container():
             with col1:
@@ -129,5 +148,10 @@ if uploaded_file:
                 st.table(mostSeen[['Common Name', 'total_observed']][-5:])
         with st.container():
             with col1:
-                dists = [df[df['Submission ID'] == i]['Distance Traveled (km)'].values[0] for i in df['Submission ID'].unique()]
-                st.text(f"You have traveled {np.nansum(dists)} kilometers while birding!")
+                dists = [df[df['Submission ID'] == i]['Distance Traveled (km)'].values[0] for i in
+                         df['Submission ID'].unique()]
+                st.text(f"You have traveled {np.nansum(dists):.2f} kilometers while birding,"
+                        f" that is {np.nansum(dists) / .0035:.2f} wandering albatross wingspans")
+                st.text(
+                    f"Your biggest day was {biggestDay.year}-{biggestDay.month}-{biggestDay.day} when you saw {BDspecies} unique species!")
+                st.text(f"You have gone birding on {len(birdingDays)} days")
