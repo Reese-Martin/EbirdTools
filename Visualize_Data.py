@@ -4,6 +4,9 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+from collections import Counter
+from datetime import datetime
+import re
 
 np.set_printoptions(legacy='1.25')  # I hate the np.int64() display option
 
@@ -25,6 +28,11 @@ if uploaded_file:
     df = load_data(uploaded_file)
     # remove / entries to avoid double counts of species in lifer totals
     df = df[[True if '/' not in i else False for i in df['Common Name']]]
+    # remove sp. entries because I am only interested in counting species with certain IDs
+    df = df[[True if 'sp.' not in i else False for i in df['Common Name']]]
+    # remove the ( because this can lead to double counting (i.e. great blue heron and great blue heron (great blue)
+    # by the way, what is up with that people? don't submit great blue heron (great blue)
+    df['Common Name'] = [i if '(' not in i else re.sub(r' \(.*\)', '', i) for i in df['Common Name']]
     # remove entries where count was 'X'
     df = df[[True if 'X' not in i else False for i in df['Count']]]
 
@@ -41,7 +49,7 @@ if uploaded_file:
     first_seen = first_seen.sort_values('Date')
     first_seen['Lifer Count'] = [i + 1 for i in range(len(all_species))]
 
-    mostSeen = first_seen.sort_values(by=['total_observed', 'Common Name'], ascending=False)
+    mostSeen = first_seen.sort_values(by=['total_observed', 'Date'], ascending=[False,True])
     mostSeen.index = [first_seen[first_seen['Common Name'] == i]['Lifer Count'].values[0] for i in
                       mostSeen['Common Name']]
     mostSeen.index.name = "Lifer Count"
@@ -60,17 +68,23 @@ if uploaded_file:
 
         hotspot_species = filtered_df.groupby(['Location', 'Latitude', 'Longitude'])[
             'Common Name'].nunique().reset_index(name='Unique Species Count')
+        cls = df.groupby('Submission ID').first()
+
+        tmp = []
+        for i, j in zip(hotspot_species['Latitude'], hotspot_species['Longitude']):
+            tmp.append(len(cls[(cls['Latitude'] == i) & (cls['Longitude'] == j)]))
+
+        hotspot_species['Log10(Location Visits)'] = np.log10(tmp)
+        hotspot_species['Location Visits'] = tmp
 
         # Map of observations
         st.subheader(f"Map of sightings")
         if filtered_df.empty:
             st.warning("No data available for this selection.")
         else:
-            # fig = px.scatter_map(filtered_df, lat="Latitude", lon="Longitude", hover_name="Location",
-            #                      hover_data=["Date", "Count"], color_discrete_sequence=["blue"], zoom=3, height=500)
-            fig = px.scatter_map(hotspot_species, lat='Latitude', lon='Longitude', color='Unique Species Count',
+            fig = px.scatter_map(hotspot_species, lat='Latitude', lon='Longitude', color='Log10(Location Visits)',
                                  size='Unique Species Count', hover_name='Location',
-                                 hover_data={'Unique Species Count': True}, zoom=3,
+                                 hover_data={'Unique Species Count': True, 'Location Visits': True}, zoom=3,
                                  height=800, color_continuous_scale='Viridis')
             fig.update_layout(mapbox_style="open-street-map", autosize=True)
             st.plotly_chart(fig)
@@ -127,7 +141,7 @@ if uploaded_file:
 
         fig = px.line(monthly_avg, x='Month Name', y='Species Count', markers=True,
                       labels={'Species Count': 'Avg. Unique Species', 'Month Name': 'Month'},
-                      title='Average Number of Unique Species per Month (All Years)')
+                      title='Average Number of Unique Species per Month')
 
         fig.update_layout(height=500, xaxis_title='Month', yaxis_title='Species Count')
         st.plotly_chart(fig, use_container_width=True)
@@ -155,3 +169,27 @@ if uploaded_file:
                 st.text(
                     f"Your biggest day was {biggestDay.year}-{biggestDay.month}-{biggestDay.day} when you saw {BDspecies} unique species!")
                 st.text(f"You have gone birding on {len(birdingDays)} days")
+
+            with col2:
+                df['Hour'] = pd.to_datetime(df['Time']).dt.hour
+                times = df.groupby('Date')['Time'].min()
+                timeList = []
+                for tm in times:
+                    timeList.append(datetime.strptime(tm, '%I:%M %p').hour)
+
+                timeCounts = pd.DataFrame(Counter(timeList).items(), columns=['Hour', 'Checklists']).sort_values('Hour')
+                timeCounts['Hour Label'] = timeCounts['Hour'].apply(lambda h: f"{int(h):02d}:00")
+                timeCounts['Hour'] = (timeCounts['Hour'].values / 24) * 360
+                timeCounts['Unique Species'] = df.groupby('Hour')['Common Name'].nunique().values
+                timeCounts['Unique Species Per Checklist'] = timeCounts['Unique Species'] / timeCounts['Checklists']
+
+                fig = px.bar_polar(timeCounts, r="Checklists", theta="Hour", template="plotly_dark",
+                                   hover_data={'Hour Label': True, 'Checklists': True, 'Hour': False},
+                                   color="Unique Species Per Checklist", color_discrete_sequence=px.colors.sequential.Plasma_r)
+
+                fig.update_layout(
+                    polar=dict(angularaxis=dict(rotation=180, direction='clockwise', tickmode='array',
+                                                tickvals=[(h / 24) * 360 for h in range(0, 24, 3)],
+                                                ticktext=[f"{h:02d}:00" for h in range(0, 24, 3)])),
+                                                title="Your Birding Chronotype \n (Checklists by time of day)")
+                st.plotly_chart(fig)
