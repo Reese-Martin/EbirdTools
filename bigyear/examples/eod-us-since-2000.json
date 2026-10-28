@@ -1,0 +1,5 @@
+{
+  "format": "SQL_TSV_ZIP",
+  "sendNotification": false,
+  "sql": "SELECT\n  \"year\",\n  \"month\",\n  \"day\",\n  stateprovince,\n  v_scientificname,\n  v_taxonconceptid,\n  decimallatitude,\n  decimallongitude,\n  MIN(gbifid) AS representative_gbifid,\n  COUNT(*) AS source_record_count,\n  SUM(CASE WHEN hasgeospatialissues = TRUE THEN 1 ELSE 0 END) AS geospatial_flagged_records,\n  SUM(CASE WHEN hasgeospatialissues IS NULL THEN 1 ELSE 0 END) AS geospatial_unknown_records,\n  MAX(coordinateuncertaintyinmeters) AS max_reported_coordinate_uncertainty_m,\n  COUNT(coordinateuncertaintyinmeters) AS records_with_reported_coordinate_uncertainty\nFROM occurrence\nWHERE datasetkey = '4fa7b334-ce0d-4e88-aaae-2e0c138d049e'\n  AND countrycode = 'US'\n  AND \"class\" = 'Aves'\n  AND basisofrecord = 'HUMAN_OBSERVATION'\n  AND \"year\" >= 2000\n  AND hascoordinate = TRUE\n  AND \"month\" IS NOT NULL\n  AND \"day\" IS NOT NULL\n  AND occurrencestatus = 'PRESENT'\nGROUP BY \"year\", \"month\", \"day\", stateprovince, v_scientificname, v_taxonconceptid, decimallatitude, decimallongitude"
+}

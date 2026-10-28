@@ -1,0 +1,15 @@
+{
+  "year": 2024,
+  "activity_minutes": 720,
+  "drive_minutes": 720,
+  "birding_minutes": 120,
+  "local_miles": 30,
+  "mixed_road_birding": true,
+  "walking_speed_kmh": 2.2,
+  "walking_threshold_m": 100,
+  "target_locations": 10000000,
+  "memory_limit": "3GB",
+  "threads": 2,
+  "seed": 20240101,
+  "alternatives": 1
+}

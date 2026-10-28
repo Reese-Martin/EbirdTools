@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Big Year · 2023 / 2024</title>
+<style>
+:root{font:16px system-ui,sans-serif;color:#163831;background:#f5f7f4}*{box-sizing:border-box}body{margin:0}main{max-width:1500px;margin:auto;padding:30px}h1{font-size:38px;letter-spacing:-1.4px;margin:8px 0}h2{font-size:20px;margin:0 0 16px}p{line-height:1.55}.eyebrow{font-size:12px;letter-spacing:2px}.muted{color:#576b65}a{color:#175f8a}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.card{background:white;border:1px solid #d7e1db;border-radius:14px;padding:20px;margin:20px 0}.grid .card{margin:0}svg{display:block;width:100%;height:auto}.stats{display:flex;gap:28px;flex-wrap:wrap}.stats strong{display:block;font-size:30px}.stats span{font-size:12px;color:#576b65}.controls{display:flex;align-items:center;gap:18px;margin:24px 0}input{flex:1;accent-color:#278174}.year-label{display:flex;justify-content:space-between;align-items:center}.blue{color:#14689d}.orange{color:#b86324}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;border-bottom:1px solid #e3e9e5;padding:10px}th:nth-child(n+2),td:nth-child(n+2){text-align:right}li{margin:9px 0;line-height:1.5}details{margin:16px 0}.species{display:flex;flex-wrap:wrap;gap:7px}.pill{background:#eff4f0;border:1px solid #dbe5de;border-radius:18px;padding:5px 10px;font-size:13px}.month-note{min-height:44px;color:#576b65;font-size:14px}.legend{font-size:13px;color:#576b65}.legend b{margin-right:20px}@media(max-width:800px){.grid{grid-template-columns:1fr}main{padding:16px}h1{font-size:30px}.stats{gap:18px}.card{padding:14px}}
+</style>
+<main>
+<div class="eyebrow">BIG YEAR / ROUTE COMPARISON</div>
+<h1>Two years, the same travel rules.</h1>
+<p class="muted">Actual 2023 and 2024 observations across the lower 48 and DC. Shared 12-hour activity days, exact observation coordinates, 2.2 km/h walking, dated flights and modeled boat trips. Primary and provisional species remain separate.</p>
+<div class="controls"><label for="month">Through <strong id="month-label">December</strong></label><input id="month" type="range" min="1" max="12" value="12" aria-label="Compare routes through month"></div>
+<div class="grid" id="maps"></div>
+<p class="legend">Solid paths: driving · Dashed connections: flights (schematic airport-to-airport lines) · Dotted paths: modeled boat trips</p>
+<section class="card"><h2>Cumulative unique species</h2><div class="legend"><b class="blue">2023</b><b class="orange">2024</b><span>Calendar month ends; full-year totals include provisional credit.</span></div><svg id="curve" viewBox="0 0 1200 270" role="img" aria-label="Species accumulation by month in 2023 and 2024"></svg></section>
+<section class="card"><h2>Full-year activity and travel</h2><table><thead><tr><th>Metric</th><th>2023</th><th>2024</th></tr></thead><tbody id="metrics"></tbody></table></section>
+<section class="card"><h2 id="species-title">Species differences</h2><p id="species-note" class="muted"></p><details><summary>Collected only on the 2023 route</summary><div id="only-2023" class="species"></div></details><details><summary>Collected only on the 2024 route</summary><div id="only-2024" class="species"></div></details><p class="muted">An asterisk marks a species available in both modeled national cohorts but collected by only one route. Unmarked species lack scored support in the other cohort; partial marine coverage and countability holds can contribute.</p></section>
+<section class="card"><h2>How to read this comparison</h2><ul id="limitations"></ul><p><a href="https://www.aba.org/aba-area-introduced-species/" target="_blank" rel="noopener">ABA introduced-population reference</a></p><p class="muted">Maps are overview traces with simplified display geometry; the saved routes retain complete road evidence and exact observation coordinates. Open either detailed route to replay daily activity, travel and species gains.</p></section>
+</main>
+<script>
+const DATA=__COMPARISON_DATA__;
+const NS='http://www.w3.org/2000/svg',colors=['#14689d','#b86324'];
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function node(tag,attrs={},text){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e}
+function text(tag,value){const e=document.createElement(tag);e.textContent=value;return e}
+const point=([lon,lat])=>[(lon+126)*19+18,(50.7-lat)*22+15];
+const path=coords=>coords.map((p,i)=>`${i?'L':'M'}${point(p).map(n=>n.toFixed(2)).join(',')}`).join(' ');
+const layers=[];
+for(const[y,index]of DATA.years.map((v,i)=>[v,i])){
+ const card=text('article','');card.className='card';const head=text('div','');head.className='year-label';
+ const title=text('h2',String(y.year));title.style.color=colors[index];head.append(title);
+ const link=text('a','Open detailed route ↗');link.href='/?run='+y.year+'/route.json';head.append(link);card.append(head);
+ const stats=text('div','');stats.className='stats';for(const key of ['species','miles','states']){const box=text('div','');const strong=text('strong','');strong.id=key+'-'+y.year;box.append(strong,text('span',key==='species'?'Species so far':key==='miles'?'Driving miles so far':'States with birding so far'));stats.append(box)}card.append(stats);
+ const svg=node('svg',{viewBox:'0 0 1200 650',role:'img','aria-label':y.year+' route overview'});
+ for(const f of DATA.states.features){const g=f.geometry;const polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:[];for(const poly of polys)svg.append(node('path',{d:poly.map(path).join(' '),fill:'#f0f4f0',stroke:'#d0ddd4','stroke-width':1}))}
+ const routeLayer=node('g'),stopLayer=node('g');svg.append(routeLayer,stopLayer);card.append(svg);
+ const note=text('p','');note.className='month-note';card.append(note);document.getElementById('maps').append(card);layers.push({routeLayer,stopLayer,note});
+}
+function draw(month){
+ document.getElementById('month-label').textContent=new Date(2023,month-1,1).toLocaleString('en-US',{month:'long'});
+ DATA.years.forEach((y,index)=>{
+  const {routeLayer,stopLayer,note}=layers[index];routeLayer.replaceChildren();stopLayer.replaceChildren();
+  for(const p of y.paths){if(p.month>month)continue;routeLayer.append(node('path',{d:path(p.points),fill:'none',stroke:colors[index],'stroke-width':p.mode==='flight'?2.2:2,opacity:p.mode==='flight'?.65:.8,'stroke-dasharray':p.mode==='flight'?'8 6':p.mode==='boat'?'3 3':'none'}))}
+  const stops=y.stops.filter(s=>s.month<=month);for(const s of stops){const[x,cy]=point([s.lon,s.lat]);const circle=node('circle',{cx:x,cy,r:3.2,fill:colors[index],stroke:'white','stroke-width':1});circle.append(node('title',{},`${s.date}: ${s.name}; ${s.new_species} new species`));stopLayer.append(circle)}
+  document.getElementById('species-'+y.year).textContent=y.months[month-1].cumulative_species;
+  document.getElementById('miles-'+y.year).textContent=Math.round(y.months.slice(0,month).reduce((a,m)=>a+m.road_miles,0)).toLocaleString();
+  document.getElementById('states-'+y.year).textContent=Object.entries(y.states).filter(([s,v])=>s.startsWith('US-')&&+v.first.slice(5,7)<=month).length;
+  note.textContent=`${months[month-1]} birding regions: ${y.months[month-1].states||'No visits'}`;
+ });
+ const curve=document.getElementById('curve');curve.replaceChildren();const max=Math.ceil(Math.max(...DATA.years.map(y=>y.metrics.species))/100)*100;
+ const xy=(m,n)=>[55+(m-1)*100,235-n/max*205];
+ for(let n=0;n<=max;n+=100){const[x,y]=xy(1,n);curve.append(node('path',{d:`M55 ${y} H1160`,stroke:'#e2e9e3'}),node('text',{x:44,y:y+4,'text-anchor':'end',fill:'#60756c','font-size':13},n))}
+ for(let m=1;m<=12;m++)curve.append(node('text',{x:xy(m,0)[0],y:260,'text-anchor':'middle',fill:'#60756c','font-size':13},months[m-1]));
+ DATA.years.forEach((y,i)=>{const points=y.months.map(m=>xy(m.month,m.cumulative_species));curve.append(node('polyline',{points:points.map(p=>p.join(',')).join(' '),fill:'none',stroke:colors[i],'stroke-width':3}));const[x,cy]=xy(month,y.months[month-1].cumulative_species);curve.append(node('circle',{cx:x,cy,r:5,fill:colors[i]}))});
+ const x=xy(month,0)[0];curve.append(node('path',{d:`M${x} 20 V235`,stroke:'#8d9e94','stroke-dasharray':'4 4'}));
+}
+const metricRows=[['Total species','species'],['Primary species','primary'],['Provisional species','provisional'],['Supported cohort species','supported_cohort_species'],['States with birding','states_with_birding'],['Driving miles','road_miles'],['Travel hours','travel_hours'],['Birding hours','birding_hours'],['Walking hours','walking_hours']];
+for(const[label,key]of metricRows){const row=text('tr','');row.append(text('td',label));for(const y of DATA.years)row.append(text('td',y.metrics[key].toLocaleString('en-US',{maximumFractionDigits:key.includes('hours')?1:0})));document.getElementById('metrics').append(row)}
+for(const kind of ['birding','road_transit','flight','pelagic','island','rest']){const row=text('tr','');row.append(text('td',kind.replace('_',' ')+' days'));for(const y of DATA.years)row.append(text('td',y.metrics.day_counts[kind]||0));document.getElementById('metrics').append(row)}
+document.getElementById('species-note').textContent=`${DATA.shared} species collected on both routes. The lists below compare the final annual route sets.`;
+for(const d of DATA.differences){const pill=text('span',d.common_name+(d.score_tier.startsWith('provisional')?' (provisional)':'')+(d.available_in_both_cohorts?' *':''));pill.className='pill';document.getElementById('only-'+d.collected_in).append(pill)}
+for(const s of DATA.limitations)document.getElementById('limitations').append(text('li',s));
+document.getElementById('month').addEventListener('input',e=>draw(+e.target.value));draw(12);
+</script></html>

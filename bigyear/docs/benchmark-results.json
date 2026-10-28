@@ -1,0 +1,368 @@
+{
+  "synthetic": true,
+  "hardware": {
+    "cpu": "Apple M4 Pro",
+    "logical_cpus": 14,
+    "ram_bytes": 25769803776,
+    "os": "macOS 15.3.1 arm64",
+    "python": "3.13.7",
+    "duckdb": "1.5.6",
+    "ortools_cpp": "9.15.6755"
+  },
+  "experiments": {
+    "initial_500_600s": {
+      "run": "/Users/rmartin/Documents/GitHub/EbirdTools/bigyear/runs/scale-500/run-2024",
+      "model": {
+        "locations": 500,
+        "opportunities": 10501,
+        "species": 400,
+        "directed_roads": 250000,
+        "engine_input_bytes": 18707366
+      },
+      "threads": 4,
+      "seed": 2024,
+      "requested_seconds": 600.0,
+      "wall_seconds": 605.8281690000003,
+      "engine_peak_rss_bytes": 22282240,
+      "python_peak_rss_bytes": 483737600,
+      "dataset_preparation_seconds": 1.0414231249997101,
+      "problem_preparation_seconds": 0.14371354099785094,
+      "engine": {
+        "species": 400,
+        "travel_minutes": 10165.7773918,
+        "road_miles": 9318.62927581,
+        "elapsed_seconds": 600.000197875,
+        "candidate_evaluations": 789938761,
+        "starts": 263315,
+        "time_to_first_feasible_seconds": 0.000610791,
+        "optimal": false,
+        "model": "canonical_intra_day_order"
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "species_total": 400,
+        "days_checked": 366,
+        "evidence_rows_checked": 995,
+        "road_miles": 9318.629275817184,
+        "travel_minutes": 10165.777391800566,
+        "scope": "calendar continuity, cached road costs, budgets, original eligible evidence and frozen taxonomy/land catalogs"
+      },
+      "provenance": {
+        "problem_sha256": "a666c3731d3caae3abb07729194fa8e57d92ee2cce99f0c82e45c418fed6812b",
+        "roads_sha256": "ebbb598f173f90d992b2ad3718735480d8dddf958ee30d351773ba69ff05b168",
+        "engine_sha256": "d6df0474ebb7ed4d530d39a975e923dc5cac6fef08a45fe4a92b0971d951099c",
+        "dataset_manifest_sha256": "0437a66aaedb9e843aa3190502290b6dd8e8780566eecfb39d8981cff9654b2c"
+      }
+    },
+    "current_500_30s": {
+      "run": "/Users/rmartin/Documents/GitHub/EbirdTools/bigyear/runs/scale-500-current",
+      "model": {
+        "locations": 500,
+        "opportunities": 10501,
+        "species": 400,
+        "directed_roads": 250000,
+        "engine_input_bytes": 18707366
+      },
+      "threads": 4,
+      "seed": 2024,
+      "requested_seconds": 30.0,
+      "wall_seconds": 36.628429625001445,
+      "engine_peak_rss_bytes": 22315008,
+      "python_peak_rss_bytes": 230391808,
+      "dataset_preparation_seconds": 1.0414231249997101,
+      "problem_preparation_seconds": 0.14371354099785094,
+      "engine": {
+        "species": 400,
+        "travel_minutes": 19695.6043173,
+        "road_miles": 18054.3039575,
+        "elapsed_seconds": 30.00017775,
+        "candidate_evaluations": 44002343,
+        "starts": 14669,
+        "time_to_first_feasible_seconds": 0.000446208,
+        "optimal": false,
+        "model": "canonical_intra_day_order"
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "species_total": 400,
+        "days_checked": 366,
+        "evidence_rows_checked": 850,
+        "road_miles": 18054.30395754878,
+        "travel_minutes": 19695.604317325953,
+        "scope": "calendar continuity, cached road costs, budgets, original eligible evidence and frozen taxonomy/land catalogs"
+      },
+      "provenance": {
+        "problem_sha256": "a666c3731d3caae3abb07729194fa8e57d92ee2cce99f0c82e45c418fed6812b",
+        "roads_sha256": "ebbb598f173f90d992b2ad3718735480d8dddf958ee30d351773ba69ff05b168",
+        "engine_sha256": "b4fd8b9eb436fec4710dc593e301c2fe43c52a391fdc97ec026978ac1c9ef2a6",
+        "dataset_manifest_sha256": "0437a66aaedb9e843aa3190502290b6dd8e8780566eecfb39d8981cff9654b2c"
+      }
+    },
+    "demo_2024": {
+      "run": "/Users/rmartin/Documents/GitHub/EbirdTools/bigyear/runs/demo/run-2024",
+      "model": {
+        "locations": 16,
+        "opportunities": 337,
+        "species": 80,
+        "directed_roads": 256,
+        "engine_input_bytes": 30885
+      },
+      "threads": 2,
+      "seed": 2024,
+      "requested_seconds": 5,
+      "wall_seconds": 6.644895916997484,
+      "engine_peak_rss_bytes": 1867776,
+      "python_peak_rss_bytes": 211222528,
+      "dataset_preparation_seconds": 0.11144979199889349,
+      "problem_preparation_seconds": 0.02362754099885933,
+      "engine": {
+        "species": 80,
+        "travel_minutes": 5873.57272084,
+        "road_miles": 5384.10832743,
+        "elapsed_seconds": 5.000176667,
+        "candidate_evaluations": 10747644,
+        "starts": 3584,
+        "time_to_first_feasible_seconds": 0.001656208,
+        "optimal": false,
+        "model": "canonical_intra_day_order"
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "species_total": 80,
+        "days_checked": 366,
+        "evidence_rows_checked": 291,
+        "road_miles": 5384.108327434207,
+        "travel_minutes": 5873.572720837317,
+        "scope": "calendar continuity, cached road costs, budgets, original eligible evidence and frozen taxonomy/land catalogs"
+      },
+      "provenance": {
+        "problem_sha256": "24545e5e4323ddf957086bc2a250d7b1f6b0b6cbf1c5d78cf96b70687e7120dc",
+        "roads_sha256": "78434b785bd88baa973db92d437d8cfde112f2b2de00a8b497d5a25d0e5d87b8",
+        "engine_sha256": "b4fd8b9eb436fec4710dc593e301c2fe43c52a391fdc97ec026978ac1c9ef2a6",
+        "dataset_manifest_sha256": "1a39281521a61303285a7b2920f64ebdd11f64c68660181aa3bf7d017f137da5"
+      }
+    },
+    "demo_2023": {
+      "run": "/Users/rmartin/Documents/GitHub/EbirdTools/bigyear/runs/demo/run-2023",
+      "model": {
+        "locations": 16,
+        "opportunities": 337,
+        "species": 80,
+        "directed_roads": 256,
+        "engine_input_bytes": 30898
+      },
+      "threads": 2,
+      "seed": 2024,
+      "requested_seconds": 5,
+      "wall_seconds": 6.054330166,
+      "engine_peak_rss_bytes": 1703936,
+      "python_peak_rss_bytes": 271302656,
+      "dataset_preparation_seconds": 0.09488062499804073,
+      "problem_preparation_seconds": 0.018806708001648076,
+      "engine": {
+        "species": 80,
+        "travel_minutes": 6192.31762324,
+        "road_miles": 5676.29115463,
+        "elapsed_seconds": 5.000178958,
+        "candidate_evaluations": 11378827,
+        "starts": 3794,
+        "time_to_first_feasible_seconds": 0.000398,
+        "optimal": false,
+        "model": "canonical_intra_day_order"
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "species_total": 80,
+        "days_checked": 365,
+        "evidence_rows_checked": 199,
+        "road_miles": 5676.291154622582,
+        "travel_minutes": 6192.317623224637,
+        "scope": "calendar continuity, cached road costs, budgets, original eligible evidence and frozen taxonomy/land catalogs"
+      },
+      "provenance": {
+        "problem_sha256": "2466e0dcad3e7a5ec7c6411f68c9f12193c9daefc91074f002ee0abd622e534f",
+        "roads_sha256": "78434b785bd88baa973db92d437d8cfde112f2b2de00a8b497d5a25d0e5d87b8",
+        "engine_sha256": "b4fd8b9eb436fec4710dc593e301c2fe43c52a391fdc97ec026978ac1c9ef2a6",
+        "dataset_manifest_sha256": "b6e67c3a84388a00179bfe2e200337368d21f06061672b1c5045fb3fb264c1ba"
+      }
+    },
+    "tiny_exhaustive": {
+      "run": "/Users/rmartin/Documents/GitHub/EbirdTools/bigyear/runs/exact-checks/exhaustive",
+      "model": {
+        "locations": 16,
+        "opportunities": 10,
+        "species": 80,
+        "directed_roads": 256,
+        "engine_input_bytes": 16790
+      },
+      "threads": 1,
+      "seed": 2024,
+      "requested_seconds": 2,
+      "wall_seconds": 0.23885974999939208,
+      "engine_peak_rss_bytes": 1179648,
+      "python_peak_rss_bytes": 120537088,
+      "dataset_preparation_seconds": 0.0924678750016028,
+      "problem_preparation_seconds": 0.02292483400015044,
+      "engine": {
+        "species": 22,
+        "travel_minutes": 1260.33956462,
+        "road_miles": 1155.31126757,
+        "elapsed_seconds": 0.000686792,
+        "candidate_evaluations": 1024,
+        "starts": 0,
+        "time_to_first_feasible_seconds": 0.000194917,
+        "optimal": true,
+        "model": "canonical_intra_day_order"
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "species_total": 22,
+        "days_checked": 366,
+        "evidence_rows_checked": 27,
+        "road_miles": 1155.3112675714758,
+        "travel_minutes": 1260.339564623428,
+        "scope": "calendar continuity, cached road costs, budgets, original eligible evidence and frozen taxonomy/land catalogs"
+      },
+      "provenance": {
+        "problem_sha256": "b140ba2631a36b3fa91f761eb8206c88964267e5c951bc148f2a63aef1b2e37d",
+        "roads_sha256": "78434b785bd88baa973db92d437d8cfde112f2b2de00a8b497d5a25d0e5d87b8",
+        "engine_sha256": "d6df0474ebb7ed4d530d39a975e923dc5cac6fef08a45fe4a92b0971d951099c",
+        "dataset_manifest_sha256": "b2d578bfc48d2d337788e02ee7ab584c4372049ed5e7870d18f6676ba3c153a8"
+      }
+    },
+    "tiny_cpsat": {
+      "run": "/Users/rmartin/Documents/GitHub/EbirdTools/bigyear/runs/exact-checks/cpsat",
+      "model": {
+        "locations": 16,
+        "opportunities": 10,
+        "species": 80,
+        "directed_roads": 256,
+        "engine_input_bytes": 16790
+      },
+      "threads": 1,
+      "seed": 2024,
+      "requested_seconds": 2,
+      "wall_seconds": 0.1235597080012667,
+      "engine_peak_rss_bytes": 24756224,
+      "python_peak_rss_bytes": 131170304,
+      "dataset_preparation_seconds": 0.0924678750016028,
+      "problem_preparation_seconds": 0.02292483400015044,
+      "engine": {
+        "species": 22,
+        "travel_minutes": 1260.33956462,
+        "road_miles": 1155.31126757,
+        "elapsed_seconds": 0.007368333,
+        "candidate_evaluations": 0,
+        "starts": 0,
+        "time_to_first_feasible_seconds": 0.007134833,
+        "optimal": true,
+        "model": "single_stop_per_day"
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "species_total": 22,
+        "days_checked": 366,
+        "evidence_rows_checked": 27,
+        "road_miles": 1155.3112675714758,
+        "travel_minutes": 1260.339564623428,
+        "scope": "calendar continuity, cached road costs, budgets, original eligible evidence and frozen taxonomy/land catalogs"
+      },
+      "provenance": {
+        "problem_sha256": "b140ba2631a36b3fa91f761eb8206c88964267e5c951bc148f2a63aef1b2e37d",
+        "roads_sha256": "78434b785bd88baa973db92d437d8cfde112f2b2de00a8b497d5a25d0e5d87b8",
+        "engine_sha256": "d35a97cfccaeb0155b5e780ea9978b602def84eb5933e9c89c6f980fa69f86c6",
+        "dataset_manifest_sha256": "b2d578bfc48d2d337788e02ee7ab584c4372049ed5e7870d18f6676ba3c153a8"
+      }
+    },
+    "tiny_heuristic": {
+      "run": "/Users/rmartin/Documents/GitHub/EbirdTools/bigyear/runs/exact-checks/heuristic",
+      "model": {
+        "locations": 16,
+        "opportunities": 10,
+        "species": 80,
+        "directed_roads": 256,
+        "engine_input_bytes": 16790
+      },
+      "threads": 1,
+      "seed": 2024,
+      "requested_seconds": 2,
+      "wall_seconds": 2.237658707999799,
+      "engine_peak_rss_bytes": 1671168,
+      "python_peak_rss_bytes": 144556032,
+      "dataset_preparation_seconds": 0.0924678750016028,
+      "problem_preparation_seconds": 0.02292483400015044,
+      "engine": {
+        "species": 22,
+        "travel_minutes": 1260.33956462,
+        "road_miles": 1155.31126757,
+        "elapsed_seconds": 2.000212125,
+        "candidate_evaluations": 3519010,
+        "starts": 1174,
+        "time_to_first_feasible_seconds": 0.000234417,
+        "optimal": false,
+        "model": "canonical_intra_day_order"
+      },
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "species_total": 22,
+        "days_checked": 366,
+        "evidence_rows_checked": 27,
+        "road_miles": 1155.3112675714758,
+        "travel_minutes": 1260.339564623428,
+        "scope": "calendar continuity, cached road costs, budgets, original eligible evidence and frozen taxonomy/land catalogs"
+      },
+      "provenance": {
+        "problem_sha256": "b140ba2631a36b3fa91f761eb8206c88964267e5c951bc148f2a63aef1b2e37d",
+        "roads_sha256": "78434b785bd88baa973db92d437d8cfde112f2b2de00a8b497d5a25d0e5d87b8",
+        "engine_sha256": "d6df0474ebb7ed4d530d39a975e923dc5cac6fef08a45fe4a92b0971d951099c",
+        "dataset_manifest_sha256": "b2d578bfc48d2d337788e02ee7ab584c4372049ed5e7870d18f6676ba3c153a8"
+      }
+    }
+  },
+  "initial_timeline": [
+    {
+      "budget_seconds": 1,
+      "elapsed_seconds": 0.99325,
+      "species": 400,
+      "travel_minutes": 26106.9,
+      "road_miles": 23931.3,
+      "evaluations": 1364041
+    },
+    {
+      "budget_seconds": 10,
+      "elapsed_seconds": 8.72579,
+      "species": 400,
+      "travel_minutes": 15219.5,
+      "road_miles": 13951.2,
+      "evaluations": 12494081
+    },
+    {
+      "budget_seconds": 60,
+      "elapsed_seconds": 42.0268,
+      "species": 400,
+      "travel_minutes": 12518.3,
+      "road_miles": 11475.1,
+      "evaluations": 61379295
+    },
+    {
+      "budget_seconds": 600,
+      "elapsed_seconds": 545.374,
+      "species": 400,
+      "travel_minutes": 10165.8,
+      "road_miles": 9318.63,
+      "evaluations": 722267215
+    }
+  ],
+  "first_fixture_ceiling_seconds": 0.0122329,
+  "initial_measured_source_sha256": {
+    "search.cpp": "5e3cd0e34a6825356dc327dce3c854f9d06c0e8102a7ec089a1893ff51ce23bf",
+    "model.h": "21c2f086adaef0e7b10e97d57f099a733999ab745b103d7c5196e77db3130060"
+  }
+}

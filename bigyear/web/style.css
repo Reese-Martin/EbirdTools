@@ -1,0 +1,174 @@
+:root{--green:#36824b;--line:#dbe9df;font-family:Inter,"Avenir Next",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#000;background:#fff;font-size:14px;font-synthesis:none}
+*{box-sizing:border-box}
+body{margin:0}
+button,select,input{font:inherit}
+button,select{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--green);outline-offset:3px}
+button{background:none;border:1px solid var(--line);color:#000;border-radius:5px;padding:7px 10px}
+button:hover{background:#f0f7f2}
+header{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:30px;padding:0 38px;background:#fff}
+.brand{font-size:19px;font-weight:800;letter-spacing:2px;color:inherit;text-decoration:none;display:flex;align-items:center;gap:10px}
+.mark{background:var(--green);color:#000;padding:3px 6px;border-radius:4px;font-size:23px}
+.brand-sub{font-size:10px;letter-spacing:1.5px;font-weight:500;align-self:end;margin-bottom:4px}
+.header-note{font-family:Georgia,serif;font-style:italic;color:#000;flex:1;font-size:14px}
+.dataset{display:flex;align-items:center;gap:8px;font-size:9px;letter-spacing:1px}
+.status-dot,.live-dot{display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-right:5px}
+select{border:0;border-bottom:1px solid var(--line);padding:7px;background:transparent;max-width:230px;color:#000;font-size:12px}
+main{max-width:1640px;margin:auto;padding:35px 38px 30px}
+.intro{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.eyebrow{font-size:9px;letter-spacing:1.5px;font-weight:650;color:#000;margin:0 0 9px}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:49px;letter-spacing:-1.8px;margin:0 0 9px}
+.subtitle{color:#000;margin:0;font-size:13px}
+.experiment{text-align:right;font-size:11px;color:#000;line-height:1.9}
+.experiment strong{display:block;color:#000;font-size:14px}
+.transport-summary{display:block;color:var(--green);font-weight:600}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px}
+.map-card,.curve-card,.details{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.map-toolbar{height:49px;padding:13px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);font-size:12px}
+.map-toolbar button{font-size:10px;border:0;padding:2px}
+.map-toolbar #day-mode{margin-left:10px;font-size:10px;color:#000}
+.map-wrap{position:relative;overflow:hidden}
+.map-species-count{position:absolute;top:14px;right:16px;display:flex;flex-direction:column;align-items:flex-end;gap:3px;min-width:105px;padding:10px 13px;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.04);pointer-events:none}
+.map-species-count strong{font-family:Georgia,serif;font-size:32px;line-height:1.05;font-weight:400;font-variant-numeric:tabular-nums}
+.map-species-count span{font-size:8px;font-weight:650;letter-spacing:1px;text-transform:uppercase}
+#map{display:block;width:100%;max-height:570px;touch-action:none;user-select:none}
+#states path{fill:#fff;stroke:var(--line);stroke-width:1.2;vector-effect:non-scaling-stroke}
+#states text{fill:#000;font-size:11px;letter-spacing:2px;pointer-events:none}
+.ocean-label{font-size:10px;letter-spacing:4px;fill:#000}
+.map-caption{position:absolute;bottom:13px;left:17px;font-size:8px;line-height:1.7;color:#000;pointer-events:none}
+.map-key{position:absolute;bottom:13px;right:15px;display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;font-size:9px;color:#000;max-width:310px}
+.map-key span{display:flex;align-items:center;gap:4px}
+.map-key [hidden]{display:none}
+.map-key i{width:15px;display:inline-block;border-top:2px solid}
+.map-key i.birding{border-color:var(--green)}
+.map-key i.road{border-color:#000}
+.map-key i.flight{border-color:#365d95;border-top-style:dotted}
+.schematic-label{font-size:8px;opacity:.8}
+.route-line{fill:none;stroke-width:2;vector-effect:non-scaling-stroke;opacity:.7;stroke-linecap:round;stroke-linejoin:round}
+.route-line.road_transit{stroke:#000;stroke-width:1.7}
+.route-line.birding{stroke:var(--green)}
+.route-line.flight{stroke:#365d95;stroke-width:2.5}
+.route-line.pelagic{stroke:#087e9b;stroke-width:2.5;stroke-dasharray:5 2}
+.route-line.island{stroke:#087e9b;stroke-width:2.5;stroke-dasharray:5 2}
+.route-line.walking{stroke:#36824b;stroke-width:2;stroke-dasharray:2 3}
+.map-key i.boat{border-color:#087e9b;border-top-style:dashed}
+.route-line.schematic{stroke-dasharray:5 4}
+.route-line.flight.schematic{stroke-dasharray:2 6}
+.stop{fill:#fff;stroke:var(--green);stroke-width:1.5;cursor:pointer;vector-effect:non-scaling-stroke}
+.stop.active{fill:var(--green);stroke:#fff;stroke-width:2}
+.stop:hover{fill:var(--green);stroke:#000}
+.timeline{display:flex;align-items:center;gap:12px;padding:13px 19px 4px;border-top:1px solid var(--line)}
+.timeline button{border:0;padding:4px}
+#play{width:30px;background:var(--green);color:#000;border-radius:50%;height:30px;font-size:12px}
+input[type=range]{flex:1;accent-color:var(--green);min-width:30px;cursor:pointer}
+input[type=date]{font-size:10px;color:#000;border:1px solid var(--line);background:#fff;border-radius:4px;padding:4px;width:105px}
+.months{display:flex;justify-content:space-between;margin:1px 215px 13px 132px;font-size:8px;letter-spacing:1px;color:#000}
+.curve-card{margin-top:15px;padding:16px 18px 8px}
+.comparison-counts{display:flex;flex-wrap:wrap;gap:14px 35px;margin-top:17px;align-items:flex-start}
+.comparison-counts>div>span{display:block;font-size:10px;line-height:1.5}
+.comparison-counts strong{font-family:Georgia,serif;font-weight:400;font-size:29px;display:inline-block;margin-top:3px}
+.comparison-counts small{font-size:10px;margin-left:9px}
+.curve-key::before{content:'';display:inline-block;width:19px;border-top:3px solid var(--green);margin:0 6px 3px 0}
+.observer-key::before{border-top:2px dashed #5b6573}
+.comparison-note{font-size:10px;line-height:1.6;margin:0 0 8px;max-width:850px}
+.section-label{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h2{font-weight:550;font-size:12px;margin:0}
+.section-label span{color:#000;font-size:10px}
+#curve{width:100%;height:125px;display:block;cursor:crosshair}
+.activity-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:20px 0 8px}
+.activity-chart{min-width:0}
+.activity-chart h3{font-size:11px;font-weight:550;margin:0 0 7px}
+.activity-value{display:flex;align-items:baseline;gap:7px}
+.activity-value strong{font-family:Georgia,serif;font-size:29px;font-weight:400;font-variant-numeric:tabular-nums}
+.activity-value span{font-size:9px}
+.activity-chart svg{width:100%;display:block;cursor:crosshair;margin-top:10px;overflow:visible}
+@media(max-width:600px){.activity-charts{grid-template-columns:1fr;gap:22px}.activity-chart svg{max-height:155px}}
+.selected-day{padding:24px 22px;border-bottom:1px solid var(--line)}
+.selected-day h2{font-family:Georgia,serif;font-weight:400;font-size:28px;letter-spacing:-.5px}
+.selected-day>p:not(.eyebrow){color:#000;font-size:11px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);margin-top:24px;gap:6px}
+.metrics strong{font-family:Georgia,serif;font-weight:400;font-size:27px;display:block}
+.metrics span{font-size:7px;letter-spacing:.7px;color:#000;display:block;margin-top:6px}
+.stops-detail{padding:20px 22px}
+.stops-detail .section-label{margin-bottom:14px}
+#stops-list button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:12px 0;font-size:11px}
+#stops-list button.chosen{color:#000;font-weight:650;box-shadow:inset 3px 0 var(--green);padding-left:8px}
+#stops-list small{display:block;color:#000;font-size:9px;margin-top:5px}
+#stop-detail{margin-top:18px;font-size:10px;color:#000;line-height:1.7}
+#stop-detail h3{font-size:11px;color:#000;margin-top:20px}
+#stop-detail ul{padding-left:15px}
+#stop-detail a{color:#000;text-decoration-color:var(--green);text-decoration-thickness:1.5px;text-underline-offset:2px}
+#stop-detail .species-row{padding:6px 0;border-bottom:1px solid var(--line)}
+#stop-detail .evidence-links{font-size:8px;color:#000;word-break:break-word}
+.empty-day{color:#000;font-size:11px;line-height:1.8;padding:12px 0}
+.audit-strip{display:grid;grid-template-columns:1.6fr 1fr 1.1fr 1fr;gap:18px;margin:22px 0;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.audit-strip .eyebrow{display:block;font-size:8px;letter-spacing:1px}
+.audit-strip strong{display:block;font-size:12px;font-weight:500}
+.assumptions summary{cursor:pointer;font-size:12px}
+.assumptions summary span{float:right;font-size:10px;color:#000}
+.assumptions ul{padding-left:20px;font-size:11px;line-height:1.9;color:#000}
+#banner{font-size:10px;color:#000;background:#f0f7f2;border:1px solid var(--green);padding:10px 13px;border-radius:5px;margin-bottom:18px;display:none}
+.search-notice{font-size:12px;line-height:1.6;background:#f0f7f2;border:1px solid var(--line);border-left:3px solid var(--green);padding:12px 15px;border-radius:5px;margin-bottom:18px}
+.search-notice p{margin:3px 0 6px}
+.search-notice a{color:#245f35;font-weight:550;margin-right:20px;text-underline-offset:3px}
+footer{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin:10px 38px 0;padding:20px 0 28px;color:#000;font-size:8px;letter-spacing:1.4px}
+footer span{letter-spacing:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+@media(min-width:1500px){#map{max-height:650px}
+.workspace{grid-template-columns:minmax(0,1fr) 355px}
+}
+@media(max-width:1000px){.header-note{display:none}
+.dataset{margin-left:auto}
+.workspace{grid-template-columns:minmax(0,1fr) 280px}
+main{padding:25px 20px}
+.metrics strong{font-size:24px}
+.map-key{max-width:230px}
+.map-caption{font-size:7px}
+.selected-day,.stops-detail{padding:20px 16px}
+}
+@media(max-width:750px){header{height:auto;min-height:70px;padding:16px;flex-wrap:wrap;gap:14px}
+.brand-sub{display:none}
+.dataset{font-size:8px}
+.intro{align-items:flex-start}
+.intro h1{font-size:39px}
+.experiment{font-size:9px}
+.experiment strong{font-size:11px}
+main{padding:24px 13px}
+.workspace{grid-template-columns:1fr}
+.details{min-height:250px}
+.map-key{bottom:8px;right:8px;font-size:7px;max-width:190px}
+.map-species-count{top:8px;right:8px;min-width:88px;padding:8px 10px}
+.map-species-count strong{font-size:25px}
+.map-species-count span{font-size:7px}
+.map-caption{max-width:150px;font-size:6px}
+.months{margin-right:164px;margin-left:110px;font-size:6px}
+.timeline{gap:7px;padding:10px 8px 3px}
+.audit-strip{grid-template-columns:1fr 1fr;gap:20px}
+.assumptions summary span{display:none}
+footer{margin:0 13px;gap:20px}
+.curve-card{padding:12px}
+.selected-day h2{font-size:25px}
+.metrics{margin-top:15px}
+}
+
+.details{max-height:780px;display:flex;flex-direction:column}
+.selected-day{flex-shrink:0}
+.stops-detail{overflow-y:auto}
+.details .stops-detail{min-height:200px}
+@media(max-width:750px){.details{max-height:650px}
+}
+
+
+/* Brand green comes from Cornell's official clo_ebird_solo_web.svg. */
+.route-line.current{opacity:1;stroke-width:2.6}
+.cursor-halo{fill:#fff;fill-opacity:.65;stroke:#000;stroke-width:1.5;vector-effect:non-scaling-stroke;pointer-events:none}
+.cursor-dot{fill:#000;pointer-events:none}
+#speed{font-size:11px;padding:4px 2px;max-width:46px;min-width:37px}
+#stops-list button.visiting{background:#f0f7f2}
+.playback-progress{display:flex;align-items:center;gap:10px;margin:0 19px;font-size:10px;min-height:24px}
+.playback-progress progress{width:100px;height:5px;accent-color:var(--green);flex-shrink:0}
+.playback-progress progress::-webkit-progress-bar{background:var(--line);border-radius:4px}
+.playback-progress progress::-webkit-progress-value{background:var(--green);border-radius:4px}
+.playback-progress span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.playback-note{font-size:10px;line-height:1.6;margin:4px 19px 13px;max-width:850px}
+@media(max-width:750px){.timeline{gap:5px}.timeline button{padding:4px 2px}.playback-progress{margin:0 10px}.playback-note{margin:4px 10px 12px;font-size:9px}}

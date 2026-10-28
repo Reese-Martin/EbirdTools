@@ -1,0 +1,7 @@
+{
+  "source": "https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_110m_admin_1_states_provinces.geojson",
+  "source_sha256": "0067dec6a2c4f9c7a644bf7a9a46163d8d881595953326d0c67d89934190aefe",
+  "license": "Natural Earth public domain",
+  "license_url": "https://www.naturalearthdata.com/about/terms-of-use/",
+  "purpose": "display only; not an eligibility land mask"
+}

@@ -1,4 +1,7 @@
-numpy
-pandas
-plotly
-streamlit
+numpy>=2.0,<3.0
+pandas>=2.2,<3.0
+plotly>=6.0,<7.0
+pycountry>=24.6,<27.0
+requests>=2.32,<3.0
+shapely>=2.0,<3.0
+streamlit>=1.55,<2.0
